@@ -9,8 +9,8 @@ use crate::time::round_time_to_5_min;
 use self::de_words::*;
 
 pub struct Field {
-    letter: char,
-    is_on: bool,
+    pub letter: char,
+    pub is_on: bool,
 }
 
 impl Field {
@@ -30,11 +30,7 @@ pub struct PatternWord {
     columns: Vec<usize>,
 }
 
-fn display_pattern(pattern: &Pattern, show_all_chars: bool) {
-    println!();
-    println!();
-    println!();
-
+pub fn display_pattern(pattern: &Pattern, show_all_chars: bool) {
     for line in pattern {
         for field in line {
             if field.is_on || show_all_chars {
@@ -45,10 +41,6 @@ fn display_pattern(pattern: &Pattern, show_all_chars: bool) {
         }
         println!();
     }
-
-    println!();
-    println!();
-    println!();
 }
 
 fn load_base_pattern() -> Result<Pattern, Box<dyn Error>> {
@@ -93,14 +85,12 @@ fn compile_pattern(base_pattern: &Pattern, words: &Vec<PatternWord>) -> Pattern 
     pattern
 }
 
-pub fn time_to_words(time: &DateTime<Local>) -> Result<(), Box<dyn Error>> {
+pub fn time_to_words(time: &DateTime<Local>) -> Result<Pattern, Box<dyn Error>> {
     let base_pattern = load_base_pattern()?;
     let words = convert_time_to_words(time);
     let pattern = compile_pattern(&base_pattern, &words);
 
-    display_pattern(&pattern, false);
-
-    Ok(())
+    Ok(pattern)
 }
 
 fn convert_time_to_words(time: &DateTime<Local>) -> Vec<PatternWord> {
