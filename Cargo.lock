@@ -528,4 +528,5 @@ dependencies = [
  "chrono",
  "clap",
  "colored",
+ "wasm-bindgen",
 ]

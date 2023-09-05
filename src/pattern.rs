@@ -2,12 +2,14 @@ mod de_words;
 
 use chrono::{DateTime, Local, Timelike};
 use colored::*;
-use std::{error::Error, fs};
+use std::{error::Error, fmt};
+use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::time::round_time_to_5_min;
 
 use self::de_words::*;
 
+#[wasm_bindgen]
 pub struct Field {
     pub letter: char,
     pub is_on: bool,
@@ -22,63 +24,253 @@ impl Field {
     }
 }
 
-pub type Line = Vec<Field>;
-pub type Pattern = Vec<Line>;
+// pub type Line = Vec<Field>;
+// pub type Pattern = Vec<Line>;
+
+#[wasm_bindgen]
+pub struct Pattern {
+    width: u32,
+    height: u32,
+    fields: Vec<Field>,
+}
+
+impl Pattern {
+    pub fn fields(&self) -> &Vec<Field> {
+        &self.fields
+    }
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+}
+
+#[wasm_bindgen]
+impl Pattern {
+    pub fn new() -> Pattern {
+        let width = 11;
+        let height = 10;
+
+        let fields = vec![
+            // vec![
+            Field::new('E'),
+            Field::new('S'),
+            Field::new('K'),
+            Field::new('I'),
+            Field::new('S'),
+            Field::new('T'),
+            Field::new('L'),
+            Field::new('F'),
+            Field::new('Ü'),
+            Field::new('N'),
+            Field::new('F'),
+            // ],
+            // vec![
+            Field::new('Z'),
+            Field::new('E'),
+            Field::new('H'),
+            Field::new('N'),
+            Field::new('Z'),
+            Field::new('W'),
+            Field::new('A'),
+            Field::new('N'),
+            Field::new('Z'),
+            Field::new('I'),
+            Field::new('G'),
+            // ],
+            // vec![
+            Field::new('D'),
+            Field::new('R'),
+            Field::new('E'),
+            Field::new('I'),
+            Field::new('V'),
+            Field::new('I'),
+            Field::new('E'),
+            Field::new('R'),
+            Field::new('T'),
+            Field::new('E'),
+            Field::new('L'),
+            // ],
+            // vec![
+            Field::new('T'),
+            Field::new('G'),
+            Field::new('N'),
+            Field::new('A'),
+            Field::new('C'),
+            Field::new('H'),
+            Field::new('V'),
+            Field::new('O'),
+            Field::new('R'),
+            Field::new('J'),
+            Field::new('M'),
+            // ],
+            // vec![
+            Field::new('H'),
+            Field::new('A'),
+            Field::new('L'),
+            Field::new('B'),
+            Field::new('Q'),
+            Field::new('Z'),
+            Field::new('W'),
+            Field::new('Ö'),
+            Field::new('L'),
+            Field::new('F'),
+            Field::new('P'),
+            // ],
+            // vec![
+            Field::new('Z'),
+            Field::new('W'),
+            Field::new('E'),
+            Field::new('I'),
+            Field::new('N'),
+            Field::new('S'),
+            Field::new('I'),
+            Field::new('E'),
+            Field::new('B'),
+            Field::new('E'),
+            Field::new('N'),
+            // ],
+            // vec![
+            Field::new('K'),
+            Field::new('D'),
+            Field::new('R'),
+            Field::new('E'),
+            Field::new('I'),
+            Field::new('R'),
+            Field::new('H'),
+            Field::new('F'),
+            Field::new('Ü'),
+            Field::new('N'),
+            Field::new('F'),
+            // ],
+            // vec![
+            Field::new('E'),
+            Field::new('L'),
+            Field::new('F'),
+            Field::new('N'),
+            Field::new('E'),
+            Field::new('U'),
+            Field::new('N'),
+            Field::new('V'),
+            Field::new('I'),
+            Field::new('E'),
+            Field::new('R'),
+            // ],
+            // vec![
+            Field::new('W'),
+            Field::new('A'),
+            Field::new('C'),
+            Field::new('H'),
+            Field::new('T'),
+            Field::new('Z'),
+            Field::new('E'),
+            Field::new('H'),
+            Field::new('N'),
+            Field::new('R'),
+            Field::new('S'),
+            // ],
+            // vec![
+            Field::new('B'),
+            Field::new('S'),
+            Field::new('E'),
+            Field::new('C'),
+            Field::new('H'),
+            Field::new('S'),
+            Field::new('F'),
+            Field::new('M'),
+            Field::new('U'),
+            Field::new('H'),
+            Field::new('R'),
+            // ],
+        ];
+
+        Pattern {
+            width,
+            height,
+            fields,
+        }
+    }
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+    pub fn get_fields(&self) -> *const Field {
+        self.fields.as_ptr()
+    }
+
+    pub fn get_field_letter(&self, x: usize, y: usize) -> char {
+        let field = &self.fields[y * self.width as usize + x];
+
+        field.letter
+    }
+
+    pub fn get_field_status(&self, x: usize, y: usize) -> bool {
+        let field = &self.fields[y * self.width as usize + x];
+
+        field.is_on
+    }
+}
+
+impl fmt::Display for Pattern {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for line in self.fields.as_slice().chunks(self.width as usize) {
+            for field in line {
+                let symbol = String::from(field.letter);
+                if field.is_on {
+                    write!(f, "{} ", symbol.bright_green())?;
+                } else {
+                    write!(f, "{} ", symbol.white().dimmed())?;
+                }
+            }
+            write!(f, "\n")?;
+        }
+
+        Ok(())
+    }
+}
 
 pub struct PatternWord {
     line: usize,
     columns: Vec<usize>,
 }
 
-pub fn display_pattern(pattern: &Pattern, show_all_chars: bool) {
-    for line in pattern {
-        for field in line {
-            if field.is_on || show_all_chars {
-                print!("{} ", String::from(field.letter).bright_green())
-            } else {
-                print!("{} ", String::from(field.letter).white().dimmed())
-            }
-        }
-        println!();
-    }
-}
+// fn load_base_pattern() -> Result<Pattern, Box<dyn Error>> {
+//     let contents = fs::read_to_string("src/pattern/de.txt")?;
 
-fn load_base_pattern() -> Result<Pattern, Box<dyn Error>> {
-    let contents = fs::read_to_string("src/pattern/de.txt")?;
+//     let mut pattern: Pattern = Pattern::new();
 
-    let mut pattern: Pattern = vec![];
+//     for line in contents.lines() {
+//         let mut curr_line: Line = vec![];
 
-    for line in contents.lines() {
-        let mut curr_line: Line = vec![];
+//         for letter in line.chars() {
+//             curr_line.push(Field::new(letter));
+//         }
 
-        for letter in line.chars() {
-            curr_line.push(Field::new(letter));
-        }
+//         pattern.fields.push(curr_line);
+//     }
 
-        pattern.push(curr_line);
-    }
+//     // display_pattern(&pattern, true);
 
-    // display_pattern(&pattern, true);
+//     Ok(pattern)
+// }
 
-    Ok(pattern)
-}
+fn compile_pattern(words: &Vec<PatternWord>) -> Pattern {
+    let mut pattern = Pattern::new();
 
-fn compile_pattern(base_pattern: &Pattern, words: &Vec<PatternWord>) -> Pattern {
-    let mut pattern = vec![];
-
-    // Deep clone
-    for base_line in base_pattern {
-        let mut line = vec![];
-        for base_char in base_line {
-            line.push(Field::new(base_char.letter))
-        }
-        pattern.push(line);
-    }
+    // // Deep clone
+    // for base_line in &base_pattern.fields {
+    //     let mut line = vec![];
+    //     for base_char in base_line {
+    //         line.push(Field::new(base_char.letter))
+    //     }
+    //     pattern.fields.push(line);
+    // }
 
     // Turn necessary fields on
     for word in words {
         for c in &word.columns {
-            pattern[word.line][*c].is_on = true;
+            pattern.fields[word.line * pattern.width as usize + c].is_on = true;
         }
     }
 
@@ -86,9 +278,9 @@ fn compile_pattern(base_pattern: &Pattern, words: &Vec<PatternWord>) -> Pattern 
 }
 
 pub fn time_to_words(time: &DateTime<Local>) -> Result<Pattern, Box<dyn Error>> {
-    let base_pattern = load_base_pattern()?;
+    // let base_pattern = load_base_pattern()?;
     let words = convert_time_to_words(time);
-    let pattern = compile_pattern(&base_pattern, &words);
+    let pattern = compile_pattern(&words);
 
     Ok(pattern)
 }
@@ -204,9 +396,9 @@ mod tests {
         assert_eq!(result.len(), 4);
     }
 
-    #[test]
-    fn loads_the_pattern() {
-        let result = load_base_pattern().unwrap();
-        assert_eq!(result[7][7].letter, 'V');
-    }
+    // #[test]
+    // fn loads_the_pattern() {
+    //     let result = load_base_pattern().unwrap();
+    //     assert_eq!(result.fields[7][7].letter, 'V');
+    // }
 }

@@ -1,9 +1,10 @@
-use std::error::Error;
+use std::{error::Error, io};
+use wasm_bindgen::prelude::*;
 
 use chrono::{DateTime, Local};
 use pattern::Pattern;
 
-use crate::pattern::{display_pattern, time_to_words};
+use crate::pattern::time_to_words;
 
 mod pattern;
 mod time;
@@ -14,9 +15,9 @@ pub fn run(print_debug: bool) -> Result<(), Box<dyn Error>> {
 
     print!("{esc}c", esc = 27 as char);
 
-    // let wordclock_words = time_to_words(&curr_time);
-    let pattern = time_to_words(&curr_time)?;
-    display_pattern(&pattern, false);
+    // let pattern = time_to_words(&curr_time)?;
+    let pattern = get_current_pattern();
+    println!("{}", pattern.render());
 
     if print_debug {
         println!();
@@ -29,10 +30,32 @@ pub fn run(print_debug: bool) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[wasm_bindgen]
+pub fn get_current_pattern() -> Pattern {
+    let curr_time: DateTime<Local> = Local::now();
+    time_to_words(&curr_time).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn greet() -> String {
+    // let pattern = get_current_pattern();
+
+    let curr_time: DateTime<Local> = Local::now();
+    let pattern = time_to_words(&curr_time);
+
+    match pattern {
+        Ok(pat) => pattern_to_string(&pat),
+        Err(e) => format!("{:?}", e),
+        // String::from("error")}
+    }
+    // Ok(pattern_to_string(&pattern))
+    // String::from("foo")
+}
+
 fn pattern_to_string(pattern: &Pattern) -> String {
     let mut result = String::from("");
 
-    for line in pattern {
+    for line in pattern.fields().as_slice().chunks(pattern.width() as usize) {
         for c in line {
             if c.is_on {
                 result.push(c.letter);
