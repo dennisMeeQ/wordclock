@@ -5,7 +5,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>  
-    <div id="clock" class="card" />
+    <div id="clock" class="wrapper"/>
   </div>
 `;
 
