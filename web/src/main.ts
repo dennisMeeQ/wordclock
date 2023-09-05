@@ -5,12 +5,12 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>  
-    <div id="greeting" class="card" />
+    <div id="clock" class="card" />
   </div>
 `;
 
 while (true) {
-  setupClock(document.querySelector<HTMLButtonElement>('#greeting')!);
+  setupClock(document.querySelector<HTMLButtonElement>('#clock')!);
 
   await sleep(30000);
 }

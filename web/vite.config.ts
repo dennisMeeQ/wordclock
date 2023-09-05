@@ -1,8 +1,9 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
     minify: false,
+    target: 'esnext',
   },
   // plugins: [wasmPack(['../wordclock_wasm'])]
   server: {
