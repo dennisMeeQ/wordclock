@@ -24,11 +24,11 @@ jobs:
         run: npm run build
 
       - name: Install dependencies web
-        working-directory: ./app
+        working-directory: ./web
         run: npm ci
 
       - name: Build app web
-        working-directory: ./app
+        working-directory: ./web
         run: npm run build
 
       # deploy the application to netlify
