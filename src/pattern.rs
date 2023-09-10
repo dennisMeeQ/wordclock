@@ -24,9 +24,6 @@ impl Field {
     }
 }
 
-// pub type Line = Vec<Field>;
-// pub type Pattern = Vec<Line>;
-
 #[wasm_bindgen]
 pub struct Pattern {
     width: u32,
@@ -50,7 +47,7 @@ impl Pattern {
         let height = 10;
 
         let fields = vec![
-            // vec![
+            // Row 0
             Field::new('E'),
             Field::new('S'),
             Field::new('K'),
@@ -62,8 +59,7 @@ impl Pattern {
             Field::new('Ü'),
             Field::new('N'),
             Field::new('F'),
-            // ],
-            // vec![
+            // Row 1
             Field::new('Z'),
             Field::new('E'),
             Field::new('H'),
@@ -75,8 +71,7 @@ impl Pattern {
             Field::new('Z'),
             Field::new('I'),
             Field::new('G'),
-            // ],
-            // vec![
+            // Row 2
             Field::new('D'),
             Field::new('R'),
             Field::new('E'),
@@ -88,8 +83,7 @@ impl Pattern {
             Field::new('T'),
             Field::new('E'),
             Field::new('L'),
-            // ],
-            // vec![
+            // Row 3
             Field::new('T'),
             Field::new('G'),
             Field::new('N'),
@@ -101,8 +95,7 @@ impl Pattern {
             Field::new('R'),
             Field::new('J'),
             Field::new('M'),
-            // ],
-            // vec![
+            // Row 4
             Field::new('H'),
             Field::new('A'),
             Field::new('L'),
@@ -114,8 +107,7 @@ impl Pattern {
             Field::new('L'),
             Field::new('F'),
             Field::new('P'),
-            // ],
-            // vec![
+            // Row 5
             Field::new('Z'),
             Field::new('W'),
             Field::new('E'),
@@ -127,8 +119,7 @@ impl Pattern {
             Field::new('B'),
             Field::new('E'),
             Field::new('N'),
-            // ],
-            // vec![
+            // Row 6
             Field::new('K'),
             Field::new('D'),
             Field::new('R'),
@@ -140,8 +131,7 @@ impl Pattern {
             Field::new('Ü'),
             Field::new('N'),
             Field::new('F'),
-            // ],
-            // vec![
+            // Row 7
             Field::new('E'),
             Field::new('L'),
             Field::new('F'),
@@ -153,8 +143,7 @@ impl Pattern {
             Field::new('I'),
             Field::new('E'),
             Field::new('R'),
-            // ],
-            // vec![
+            // Row 8
             Field::new('W'),
             Field::new('A'),
             Field::new('C'),
@@ -166,8 +155,7 @@ impl Pattern {
             Field::new('N'),
             Field::new('R'),
             Field::new('S'),
-            // ],
-            // vec![
+            // Row 9
             Field::new('B'),
             Field::new('S'),
             Field::new('E'),
@@ -179,7 +167,6 @@ impl Pattern {
             Field::new('U'),
             Field::new('H'),
             Field::new('R'),
-            // ],
         ];
 
         Pattern {
@@ -194,9 +181,6 @@ impl Pattern {
     }
     pub fn height(&self) -> u32 {
         self.height
-    }
-    pub fn get_fields(&self) -> *const Field {
-        self.fields.as_ptr()
     }
 
     pub fn get_field_letter(&self, x: usize, y: usize) -> char {
@@ -235,37 +219,8 @@ pub struct PatternWord {
     columns: Vec<usize>,
 }
 
-// fn load_base_pattern() -> Result<Pattern, Box<dyn Error>> {
-//     let contents = fs::read_to_string("src/pattern/de.txt")?;
-
-//     let mut pattern: Pattern = Pattern::new();
-
-//     for line in contents.lines() {
-//         let mut curr_line: Line = vec![];
-
-//         for letter in line.chars() {
-//             curr_line.push(Field::new(letter));
-//         }
-
-//         pattern.fields.push(curr_line);
-//     }
-
-//     // display_pattern(&pattern, true);
-
-//     Ok(pattern)
-// }
-
 fn compile_pattern(words: &Vec<PatternWord>) -> Pattern {
     let mut pattern = Pattern::new();
-
-    // // Deep clone
-    // for base_line in &base_pattern.fields {
-    //     let mut line = vec![];
-    //     for base_char in base_line {
-    //         line.push(Field::new(base_char.letter))
-    //     }
-    //     pattern.fields.push(line);
-    // }
 
     // Turn necessary fields on
     for word in words {
@@ -278,7 +233,6 @@ fn compile_pattern(words: &Vec<PatternWord>) -> Pattern {
 }
 
 pub fn time_to_words(time: &DateTime<Local>) -> Result<Pattern, Box<dyn Error>> {
-    // let base_pattern = load_base_pattern()?;
     let words = convert_time_to_words(time);
     let pattern = compile_pattern(&words);
 
@@ -395,10 +349,4 @@ mod tests {
         let result = convert_time_to_words(&time);
         assert_eq!(result.len(), 4);
     }
-
-    // #[test]
-    // fn loads_the_pattern() {
-    //     let result = load_base_pattern().unwrap();
-    //     assert_eq!(result.fields[7][7].letter, 'V');
-    // }
 }

@@ -1,4 +1,4 @@
-use std::{error::Error, io};
+use std::error::Error;
 use wasm_bindgen::prelude::*;
 
 use chrono::{DateTime, Local};
@@ -15,7 +15,6 @@ pub fn run(print_debug: bool) -> Result<(), Box<dyn Error>> {
 
     print!("{esc}c", esc = 27 as char);
 
-    // let pattern = time_to_words(&curr_time)?;
     let pattern = get_current_pattern();
     println!("{}", pattern.render());
 
@@ -38,18 +37,13 @@ pub fn get_current_pattern() -> Pattern {
 
 #[wasm_bindgen]
 pub fn greet() -> String {
-    // let pattern = get_current_pattern();
-
     let curr_time: DateTime<Local> = Local::now();
     let pattern = time_to_words(&curr_time);
 
     match pattern {
         Ok(pat) => pattern_to_string(&pat),
         Err(e) => format!("{:?}", e),
-        // String::from("error")}
     }
-    // Ok(pattern_to_string(&pattern))
-    // String::from("foo")
 }
 
 fn pattern_to_string(pattern: &Pattern) -> String {
