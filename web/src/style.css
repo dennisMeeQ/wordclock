@@ -1,10 +1,14 @@
 :root {
+  --main-color-off: hsl(0deg 0% 100% / 25%);
+  --main-color-on: hsl(122deg 100% 70%);
+  --bg-color: hsl(0deg 0% 14%);
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--main-color-off);
+  background-color: var(--bg-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -35,7 +39,7 @@ body {
   min-width: 200px;
   min-height: 200px;
 
-  border: 2px solid hsl(0deg 0% 100% / 25%);
+  border: 2px solid var(--main-color-off);
   border-radius: 2rem;
   padding: 1rem;
 }
@@ -55,15 +59,24 @@ body {
 }
 
 .off {
-  color: hsl(0deg 0% 100% / 25%);
+  color: var(--main-color-off);
 }
 .on {
-  color: hsl(122deg 100% 70%);
+  color: var(--main-color-on);
 
-  filter: drop-shadow(0 0 1em hsl(122deg 100% 70%));
+  filter: drop-shadow(0 0 1em var(--main-color-on));
 }
 
 pre {
   margin: 0;
   font-size: clamp(1rem, 0rem + min(4vw, 4vh), 3rem);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --main-color-off: hsl(208deg 37% 20%);
+    --main-color-on: hsl(0deg 100% 50%);
+
+    --bg-color: hsl(0deg 0% 100%);
+  }
 }

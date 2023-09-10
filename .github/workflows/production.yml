@@ -32,11 +32,13 @@ jobs:
         run: npm run build
 
       # deploy the application to netlify
-      - name: Deploy production to Netlify
-        uses: South-Paw/action-netlify-deploy@v1.2.1
+      - name: Publish
+        uses: South-Paw/action-netlify-cli@1.0.1
+        id: netlify
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
-          build-dir: './web/dist'
-          comment-on-commit: true
+          # be sure to escape any double quotes with a backslash and note that the --json
+          # flag has been passed when deploying - if you want the outputs to work you'll need to include it
+          args: 'deploy --dir \"./web/dist\" --message \"deploy [${{ github.sha }}]\"'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
