@@ -214,6 +214,7 @@ impl fmt::Display for Pattern {
     }
 }
 
+#[derive(PartialEq, Debug)]
 pub struct PatternWord {
     line: usize,
     columns: Vec<usize>,
@@ -304,7 +305,7 @@ fn convert_time_to_words(time: &DateTime<Local>) -> Vec<PatternWord> {
     // HOUR
     let mut hour_for_word = hour;
     if minute > 20 {
-        hour_for_word = hour_for_word + 1;
+        hour_for_word = (hour_for_word + 1) % 12;
     }
 
     match hour_for_word {
@@ -344,9 +345,80 @@ mod tests {
     }
 
     #[test]
-    fn converts_time_to_words_0() {
+    fn converts_time_to_words_00_13() {
+        let time = create_time(00, 13);
+        let result = convert_time_to_words(&time);
+        assert_eq!(
+            result,
+            vec![
+                get_word(Words::Es),
+                get_word(Words::Ist),
+                get_word(Words::Viertel),
+                get_word(Words::Nach),
+                get_word(Words::ZwoelfHour)
+            ]
+        );
+    }
+
+    #[test]
+    fn converts_time_to_words_00_52() {
+        let time = create_time(00, 52);
+        let result = convert_time_to_words(&time);
+        assert_eq!(
+            result,
+            vec![
+                get_word(Words::Es),
+                get_word(Words::Ist),
+                get_word(Words::ZehnMinute),
+                get_word(Words::Vor),
+                get_word(Words::EinsHour)
+            ]
+        );
+    }
+
+    #[test]
+    fn converts_time_to_words_01_01() {
+        let time = create_time(01, 01);
+        let result = convert_time_to_words(&time);
+        assert_eq!(
+            result,
+            vec![
+                get_word(Words::Es),
+                get_word(Words::Ist),
+                get_word(Words::EinsHour),
+                get_word(Words::Uhr)
+            ]
+        );
+    }
+
+    #[test]
+    fn converts_time_to_words_01_11() {
+        let time = create_time(01, 11);
+        let result = convert_time_to_words(&time);
+        assert_eq!(
+            result,
+            vec![
+                get_word(Words::Es),
+                get_word(Words::Ist),
+                get_word(Words::ZehnMinute),
+                get_word(Words::Nach),
+                get_word(Words::EinsHour)
+            ]
+        );
+    }
+
+    #[test]
+    fn converts_time_to_words_16_01() {
         let time = create_time(16, 01);
         let result = convert_time_to_words(&time);
-        assert_eq!(result.len(), 4);
+        assert_eq!(
+            result,
+            vec![
+                get_word(Words::Es),
+                get_word(Words::Ist),
+                get_word(Words::VierHour),
+                get_word(Words::Uhr)
+            ]
+        );
     }
 }

@@ -6,6 +6,7 @@ use pattern::Pattern;
 
 use crate::pattern::time_to_words;
 
+mod led;
 mod pattern;
 mod time;
 
@@ -17,6 +18,8 @@ pub fn run(print_debug: bool) -> Result<(), Box<dyn Error>> {
 
     let pattern = get_current_pattern();
     println!("{}", pattern.render());
+
+    led::turn_leds_on(&pattern);
 
     if print_debug {
         println!();

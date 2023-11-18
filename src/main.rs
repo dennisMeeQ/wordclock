@@ -39,9 +39,9 @@ fn main() {
     }
 }
 
-fn continuous_mode(exact: bool) -> Result<(), Box<dyn Error>> {
+fn continuous_mode(print_debug: bool) -> Result<(), Box<dyn Error>> {
     loop {
-        let _ = wordclock::run(exact)?;
+        let _ = wordclock::run(print_debug)?;
 
         let one_second = time::Duration::from_secs(1);
         sleep(one_second);
